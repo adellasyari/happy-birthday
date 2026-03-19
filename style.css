@@ -1,0 +1,479 @@
+/* Reset & layout */
+html, body {
+  width: 100vw;
+  height: 100dvh; /* use dynamic viewport height for mobile address bars */
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* disable scrolling */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Spline viewer fills screen */
+spline-viewer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: auto !important; /* ensure Spline remains interactive */
+}
+
+/* Allow page-level scrolling so tall modals can be viewed by scrolling the page */
+html, body {
+  overflow: auto; /* enable scrolling */
+  height: 100dvh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+/* Ensure modals and cards are visible without forcing internal scroll behavior */
+.modal, .modal * { overflow: visible !important; }
+.glass-card { overflow: visible !important; }
+
+/* Hidden helper (MUTLAK: jangan ubah) */
+.hidden {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+/* Loading screen */
+#loading-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 25, 16, 0.95);
+  color: #fff;
+  font-size: 1.15rem;
+  z-index: 9999;
+  transition: opacity 1s ease;
+  opacity: 1;
+  pointer-events: auto; /* block clicks until hidden */
+}
+#loading-screen.hide-loader {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Ensure applying the generic .hidden class to the loading screen
+   will produce a smooth fade and will not block clicks. */
+#loading-screen.hidden {
+  opacity: 0;
+  pointer-events: none !important;
+  visibility: hidden;
+}
+
+/* Fade-in animation for main visuals */
+.fade-in { animation: fadeIn 0.8s ease forwards; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0);} }
+
+/* Hint badge */
+#hint-text {
+  position: fixed;
+  left: 50%;
+  bottom: 36px;
+  transform: translateX(-50%);
+  z-index: 200;
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  font-weight: 600;
+  pointer-events: auto;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  animation: bounce 2s infinite ease-in-out;
+}
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-8px); }
+}
+
+/* Night overlay should be above spline but below modals */
+#night-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2; /* above spline-viewer (1) but below modals (100) */
+  background: rgba(20,10,40,0.12);
+  pointer-events: none !important; /* ensure it never blocks clicks */
+}
+
+/* Ensure spline-viewer accepts pointer events */
+spline-viewer {
+  pointer-events: auto !important;
+}
+
+/* Modal overlay centered */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100; /* ensure above spline-viewer */
+  padding: 1rem;
+  box-sizing: border-box;
+  /* Allow clicks to pass through when modal wrapper is present but
+     no interactive panel is visible. Inner panel (.glass or .glass-panel)
+     must enable pointer-events to receive clicks. */
+  pointer-events: none;
+}
+
+/* Modal entrance animation (when .activate is added) */
+.modal {
+  opacity: 0;
+  transition: opacity 260ms ease;
+}
+.modal .modal-content {
+  transform: translateY(12px) scale(0.99);
+  opacity: 0;
+  transition: transform 320ms cubic-bezier(.2,.8,.2,1), opacity 320ms ease;
+}
+.modal.activate {
+  opacity: 1;
+  pointer-events: auto; /* allow interactions when active */
+}
+.modal.activate .modal-content {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+/* When modal is active, make it part of the document flow so the page can scroll to view tall content */
+.modal.activate {
+  position: static; /* remove fixed overlay so page height increases */
+  inset: auto;
+  display: block;
+}
+
+/* Hide the modal backdrop when modal is part of the page flow */
+.modal.activate::before { display: none; }
+
+/* Ensure modal content is centered within the document flow */
+.modal .modal-content { margin: 40px auto; }
+
+/* Slight backdrop blur on active modal for nicer effect */
+.modal.activate::before {
+  background: rgba(0,0,0,0.36);
+  transition: background 260ms ease;
+}
+
+.modal::before {
+  /* subtle dimmer behind modal to prevent visual clutter */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.25);
+  z-index: 99; /* sits under modal content */
+}
+
+.modal-content {
+  position: relative;
+  z-index: 101;
+  width: 100%;
+  max-width: 420px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.12));
+  border-radius: 14px;
+  padding: 20px 20px 18px 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #082032;
+  box-sizing: border-box;
+}
+
+/* Glass panel used for the gift letter modal */
+.glass {
+  position: relative;
+  z-index: 101;
+  width: 100%;
+  max-width: 520px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(250,250,250,0.92));
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+  color: #10222a;
+  box-sizing: border-box;
+  backdrop-filter: blur(8px) saturate(120%);
+  /* Ensure the panel itself accepts pointer events even though
+     its modal parent is set to pointer-events:none. */
+  pointer-events: auto !important;
+}
+
+/* Alternative panel class requested by user */
+.glass-panel { pointer-events: auto !important; }
+
+.glass h2 { margin: 0 0 6px 0; }
+.glass p { margin: 0 0 12px 0; color: #2b4a50 }
+
+/* Close button variant used inside the glass panel */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(8,32,40,0.06);
+  border: 1px solid rgba(0,0,0,0.06);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  z-index: 102;
+}
+
+/* Textarea inside modal */
+#gift-message {
+  width: 100%;
+  min-height: 140px;
+  resize: vertical;
+  padding: 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 6px 18px rgba(15, 30, 35, 0.06), inset 0 1px 0 rgba(255,255,255,0.7);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #12323a;
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(250,250,250,0.98));
+  transition: box-shadow 160ms ease, transform 160ms ease;
+  box-sizing: border-box;
+  margin-bottom: 12px;
+}
+
+/* Make the gift textarea expand tall so content isn't clipped and internal scrollbar removed */
+#gift-message {
+  resize: none;
+  overflow: visible !important;
+  height: auto !important;
+  min-height: 55vh; /* make textarea tall enough to show most messages */
+}
+
+/* Larger glass variant (use .glass.large when you need a wider panel) */
+.glass.large {
+  max-width: 720px;
+  width: min(92%, 720px);
+  padding: 26px 26px 22px 26px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(250,250,250,0.9));
+  box-shadow: 0 18px 48px rgba(16, 34, 37, 0.12);
+}
+
+.glass .close-btn {
+  right: 18px;
+  top: 14px;
+  width: 38px;
+  height: 38px;
+  font-size: 20px;
+  line-height: 38px;
+}
+
+.btn-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.9);
+  border: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 102;
+}
+
+/* Responsive tweaks for mobile */
+@media (max-width: 480px) {
+  .modal-content { max-width: 92%; padding: 14px; border-radius: 12px; }
+  .modal-content h2 { font-size: 1.05rem; }
+}
+
+/* Final (grande) modal styles */
+.modal-final::before { background: rgba(0,0,0,0.45); }
+.modal-content-final {
+  max-width: 900px;
+  width: calc(100% - 48px);
+  padding: 36px 48px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.08));
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+  backdrop-filter: blur(12px) saturate(120%);
+}
+
+.modal-content-final h1 { margin: 0 0 12px 0; font-size: 2rem; color: #fff; }
+.modal-content-final p { color: rgba(255,255,255,0.9); font-size: 1.05rem; }
+
+.btn-close-final { background: rgba(255,255,255,0.12); color: #fff; }
+
+@media (max-width: 480px) {
+  .modal-content-final { padding: 22px; }
+  .modal-content-final h1 { font-size: 1.25rem; }
+}
+
+/* Cinematic gift styles removed to keep Spline click behavior focused on modal */
+
+/* Scavenger-hunt final card styles */
+.glass-card {
+  position: relative; /* Wajib ada untuk memosisikan tombol X */
+  background: rgba(255, 255, 255, 1); /* lebih cerah */
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: 20px;
+  padding: 40px 30px 30px 30px; /* Padding atas lebih besar agar teks tidak nabrak tombol X */
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 14px 60px rgba(0, 0, 0, 0.18);
+  text-align: left;
+  color: #222; /* lebih kontras */
+  border: 1px solid rgba(0,0,0,0.04);
+  box-sizing: border-box;
+  pointer-events: auto !important;
+  z-index: 200; /* ensure card sits above modal pseudo-backdrop */
+  /* make card expand vertically instead of scrolling internally */
+  max-height: none;
+  overflow-y: visible;
+}
+
+.glass-card .card-content p {
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  color: #222;
+}
+.glass-card .card-content .signature {
+  font-weight: bold;
+  margin-top: 20px;
+  font-style: italic;
+}
+
+/* Minimal X button in corner */
+.close-x-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  font-weight: bold;
+  color: #888;
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s ease;
+  z-index: 9999; /* ensure on top */
+  pointer-events: auto; /* make sure clickable */
+}
+.close-x-btn:hover { color: #ff6b6b; }
+.close-x-btn { z-index: 201; }
+
+/* Slightly larger, more readable text and tighter spacing */
+.glass-card .card-content p { font-size: 15.5px; line-height: 1.7; color: #333; }
+
+@media (max-width: 560px) {
+  .glass-card { padding: 22px 18px 18px 18px; width: 94%; }
+  .glass-card .card-content p { font-size: 15px; }
+  .close-x-btn { font-size: 22px; top: 12px; right: 12px; }
+}
+
+/* Mobile-specific responsive overrides requested by user */
+/* Memastikan kanvas 3D pas di layar dan tidak ada scrollbar luar */
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  background-color: #ADB794; /* Sesuai warna background Spline */
+}
+
+spline-viewer {
+  width: 100%;
+  height: 100%;
+}
+
+/* --- PENYESUAIAN KHUSUS MOBILE (HP) --- */
+@media (max-width: 768px) {
+  /* Penyesuaian Teks Petunjuk */
+  #hint-text {
+    font-size: 12px;
+    padding: 8px 16px;
+    bottom: 30px;
+    width: 85%;
+    text-align: center;
+  }
+
+  /* Penyesuaian Kartu Ucapan */
+  .glass-card {
+    width: 92%;
+    padding: 20px 16px 18px 16px;
+    /* On mobile allow the card to grow and avoid internal scroll where possible */
+    max-height: none;
+    overflow-y: visible;
+    border-radius: 14px;
+    /* Center text on small screens for better readability */
+    text-align: center;
+  }
+
+  /* Penyesuaian Teks Surat */
+  .card-content p {
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+    text-align: center; /* center paragraph text on mobile */
+  }
+
+  /* Ensure other message containers are centered on mobile */
+  #gift-message, .glass, .glass .card-content { text-align: center; }
+  .card-content .signature { text-align: center; }
+
+  /* Penyesuaian Tombol Silang */
+  .close-x-btn {
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+  }
+
+  /* Make modal part of the page flow on small screens so the page can scroll
+     to reveal very tall cards (mobile behavior like desktop). */
+  .modal.activate {
+    position: static !important;
+    display: block !important;
+    pointer-events: auto !important;
+  }
+  .modal.activate::before { display: none !important; }
+  .modal .modal-content { margin: 20px auto !important; max-width: 92% !important; }
+  /* Ensure body allows scrolling on small screens */
+  html, body { overflow: auto; position: relative; }
+}
+
+/* When cards are tall, align modal toward top so the card grows downward and stays visible */
+@media (max-width: 1024px) {
+  .modal.activate { align-items: flex-start; padding-top: 6vh; }
+}
+
+/* Ensure modals grow but remain visually centered when content is tall on large screens */
+@media (min-width: 1025px) {
+  .modal.activate { align-items: center; }
+  /* Make the card and textarea slightly taller so content rarely requires scrolling */
+  .glass-card { min-height: 85vh; }
+  #gift-message { min-height: 82vh; }
+}

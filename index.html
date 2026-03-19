@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>happy birthday ndutt</title>
+
+    <!-- Spline Viewer -->
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.69/build/spline-viewer.js"></script>
+
+    <!-- canvas-confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+    <link rel="stylesheet" href="style.css?v=2" />
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  </head>
+  <body>
+
+    <!-- Loading screen -->
+    <div id="loading-screen">Menyiapkan sesuatu yang spesial...</div>
+
+    <!-- Spline background (fills screen) -->
+    <spline-viewer url="https://prod.spline.design/fXl3dZBUU6T1-1qZ/scene.splinecode"></spline-viewer>
+
+    <!-- Night overlay (above spline, below modals) -->
+    <div id="night-overlay"></div>
+
+    <!-- Hint text -->
+    <div id="hint-text">cari 2 barang dan temukan kartu ucapan dan kata kata</div>
+
+    <!-- Modal: Gift (letter) -->
+    <div id="modal-gift" class="modal hidden" role="dialog" aria-modal="true">
+      <div class="glass" role="document">
+        <button class="close-btn" type="button" aria-label="Tutup surat" onclick="tutupModal('modal-gift')">&times;</button>
+        <form id="gift-form">
+          <textarea id="gift-message" name="message" rows="8" placeholder="Tulis pesanmu di sini..."></textarea>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: Cake (triggers final sequence) -->
+    <div id="modal-cake" class="modal hidden" role="dialog" aria-modal="true">
+      <div class="modal-content">
+        <button id="close-cake" type="button" class="btn btn-close" aria-label="Tutup" onclick="tutupModal('modal-cake')">✕</button>
+        <h2>Selamat!</h2>
+        <p>Klik kue untuk melihat kejutan spesial.</p>
+      </div>
+    </div>
+
+    <!-- Modal: Final (Scavenger Hunt Card) -->
+    <div id="modal-final" class="modal hidden">
+      <div class="glass-card">
+        <button id="close-x-btn" type="button" class="close-x-btn">&times;</button>
+        <div class="card-content">
+                <p>happy birthday ya ndutt</p>
+                <p>nggak kerasa sekarang kamu udah 21 tahun aja. semoga di umur yang baru ini kamu jadi pribadi yang makin dewasa, makin kuat ngejalanin semuanya, dan semua yang kamu cita-citain bisa pelan-pelan tercapai.</p>
+                <p>aku cuma mau bilang, terima kasih udah jadi bagian dari hidup aku sampai sekarang. makasih juga udah selalu ada, sabar, dan nerima aku apa adanya. semoga ke depannya kita bisa terus bareng-bareng, saling support, dan tumbuh jadi versi terbaik dari diri kita masing-masing.</p>
+                <p>semoga hari ini kamu bahagia, dapet banyak hal baik, dan selalu dikelilingi orang-orang yang sayang sama kamu (termasuk aku).</p>
+                <p>lov u, selalu</p>
+                <p class="signature">- adell</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- background music removed as requested -->
+
+    <!-- cinematic overlay removed to keep Spline click behavior clean -->
+
+    <script src="script.js?v=2"></script>
+  </body>
+</html>
